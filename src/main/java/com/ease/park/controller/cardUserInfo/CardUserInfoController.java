@@ -24,7 +24,7 @@ public class CardUserInfoController {
 
     @PostMapping("/save")
     public ResponseEntity<ParkingResponse> saveCardUserInfo(@RequestBody List<CardUserInfoDto> cardUserInfoDto) {
-        log.info("saveCardUserInfo");
+        log.info("inside saveCardUserInfo -> data : {} ",cardUserInfoDto);
         List<CardUserInfoDto> savedCardUserInfo = cardUserInfoService.saveCardUserInfo(cardUserInfoDto);
         ParkingResponse parkingResponse = ParkingResponse.builder().code(HttpStatus.OK.value()).message(HttpStatus.OK.name()).data(savedCardUserInfo).build();
         return ResponseEntity.ok(parkingResponse);
