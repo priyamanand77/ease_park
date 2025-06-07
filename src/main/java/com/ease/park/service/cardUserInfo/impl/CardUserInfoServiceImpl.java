@@ -20,7 +20,7 @@ public class CardUserInfoServiceImpl implements CardUserInfoService {
 
     @Override
     public List<CardUserInfoDto> saveCardUserInfo(List<CardUserInfoDto> cardUserInfoDto) {
-        log.info("inside saveCardUserInfo -> data : {} ",cardUserInfoDto);
+        log.info("inside saveCardUserInfo -> data : {} ", cardUserInfoDto);
         List<CardInfoUserEntity> cardInfoUserEntities = cardUserInfoRepo.saveAll(cardUserInfoDto.stream().map(x -> Mapper.toEntity(x, CardInfoUserEntity.class)).toList());
         return cardInfoUserEntities.stream().map(x -> Mapper.toDto(x, CardUserInfoDto.class)).toList();
     }

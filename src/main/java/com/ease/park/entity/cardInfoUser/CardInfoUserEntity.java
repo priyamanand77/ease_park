@@ -12,7 +12,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "card_info_user")
+@Table(name = "card_info_user",
+        indexes = {@Index(name = "idx_card_id", columnList = "card_id")}
+)
 public class CardInfoUserEntity {
 
     @Id
