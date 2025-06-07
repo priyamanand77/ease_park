@@ -1,6 +1,6 @@
 package com.ease.park.service.logoutService.impl;
 
-import com.ease.park.dto.BookingDto;
+import com.ease.park.dto.booking.BookingDto;
 import com.ease.park.dto.slotRequest.BookSlotRequestDto;
 import com.ease.park.entity.bookingStatus.BookingEntity;
 import com.ease.park.entity.parkingSpace.ParkingSpaceEntity;

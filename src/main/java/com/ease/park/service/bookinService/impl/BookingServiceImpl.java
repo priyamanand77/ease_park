@@ -43,7 +43,7 @@ public class BookingServiceImpl implements BookingService {
                     .findAny().orElseThrow(() -> new EaseParkException("no parking space available", HttpStatus.INTERNAL_SERVER_ERROR));
 
             CardInfoUserEntity byCardIdOrPh = cardUserInfoRepo.findByCardIdOrPh(bookSlotRequestDto.getCardUserInfoDto().getCardId(), bookSlotRequestDto.getCardUserInfoDto().getPh())
-                    .orElseThrow(() -> new EaseParkException("card not found", HttpStatus.BAD_REQUEST));
+                    .orElseThrow(() -> new EaseParkException("card or Phone not found", HttpStatus.BAD_REQUEST));
 
             parkingSpace.setIsActive(false);
             parkingSpaceRepo.save(parkingSpace);

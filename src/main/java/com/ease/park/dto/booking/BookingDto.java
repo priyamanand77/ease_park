@@ -1,4 +1,4 @@
-package com.ease.park.dto;
+package com.ease.park.dto.booking;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

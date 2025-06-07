@@ -4,7 +4,7 @@ import org.modelmapper.ModelMapper;
 
 public class Mapper {
 
-    private static ModelMapper modelMapper = new ModelMapper();
+    private static final ModelMapper modelMapper = new ModelMapper();
 
     public static <T> T toEntity(Object source, Class<T> targetClass) {
         return modelMapper.map(source, targetClass);

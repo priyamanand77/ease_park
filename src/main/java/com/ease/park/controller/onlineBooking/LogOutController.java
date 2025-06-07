@@ -1,6 +1,6 @@
 package com.ease.park.controller.onlineBooking;
 
-import com.ease.park.dto.BookingDto;
+import com.ease.park.dto.booking.BookingDto;
 import com.ease.park.dto.response.ParkingResponse;
 import com.ease.park.dto.slotRequest.BookSlotRequestDto;
 import com.ease.park.service.logoutService.LogoutService;
