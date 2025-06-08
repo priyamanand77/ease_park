@@ -8,9 +8,9 @@ WORKDIR /app
 COPY pom.xml .
 
 # Cache the dependencies
-RUN --mount=type=cache,target=/root/.m2 \
-    apk add --no-cache maven && \
-    mvn dependency:resolve
+#RUN --mount=type=cache,target=/root/.m2 \
+#    apk add --no-cache maven && \
+#    mvn dependency:resolve
 
 # Copy the application code into the container
 COPY src ./src
