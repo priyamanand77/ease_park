@@ -27,12 +27,14 @@ public class ParkingSpaceEntity {
     @Column(name = "floor", length = 10)
     private String floor;
     @Column(name = "is_active", columnDefinition = "boolean default true")
-    private Boolean isActive;
+    private Boolean active;
+    @Column(name = "parking_type", length = 10)
+    private String parkingType;
 
     @PrePersist
     protected void onCreate() {
-        if (isActive == null) {
-            isActive = true;
+        if (active == null) {
+            active = true;
         }
     }
 }

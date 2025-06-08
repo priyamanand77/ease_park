@@ -20,4 +20,5 @@ public class BookSlotRequestDto {
     private Timestamp startTime;
     private Timestamp endTime; // by default 8 hours
     private ParkingSpacesDto parkingSpacesDto;
+    private String vehicleType;
 }

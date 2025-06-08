@@ -33,34 +33,25 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookSlotRequestDto getBooking(BookSlotRequestDto bookSlotRequestDto) {
         try {
-            Optional<BookingEntity> bookingAlreadyExists = bookingRepo.findByCardIdOrPhAndStatusIsTrue(bookSlotRequestDto.getCardUserInfoDto().getCardId(), bookSlotRequestDto.getCardUserInfoDto().getPh());
-            if (bookingAlreadyExists.isPresent())
-                throw new EaseParkException("booking already exists", HttpStatus.BAD_REQUEST);
 
+            checkAlreadyBookedStatus(bookSlotRequestDto);
             log.info("inside getBooking -> data : {} ", bookSlotRequestDto);
-            ParkingSpaceEntity parkingSpace = parkingSpaceRepo.findAll().parallelStream()
-                    .filter(ParkingSpaceEntity::getIsActive)
+            ParkingSpaceEntity parkingSpace = parkingSpaceRepo.findAllByActiveIsTrueAndParkingType(bookSlotRequestDto.getVehicleType()).parallelStream()
                     .findAny().orElseThrow(() -> new EaseParkException("no parking space available", HttpStatus.INTERNAL_SERVER_ERROR));
 
             CardInfoUserEntity byCardIdOrPh = cardUserInfoRepo.findByCardIdOrPh(bookSlotRequestDto.getCardUserInfoDto().getCardId(), bookSlotRequestDto.getCardUserInfoDto().getPh())
                     .orElseThrow(() -> new EaseParkException("card or Phone not found", HttpStatus.BAD_REQUEST));
 
-            parkingSpace.setIsActive(false);
-            parkingSpaceRepo.save(parkingSpace);
+            parkingSpace.setActive(false);
+            CompletableFuture.runAsync(() -> parkingSpaceRepo.save(parkingSpace));
             BookSlotRequestDto slotRequestDto = BookSlotRequestDto.builder()
                     .cardUserInfoDto(Mapper.toDto(byCardIdOrPh, CardUserInfoDto.class))
                     .parkingSpacesDto(Mapper.toDto(parkingSpace, ParkingSpacesDto.class))
                     .startTime(bookSlotRequestDto.getStartTime())
                     .endTime(Optional.ofNullable(bookSlotRequestDto.getEndTime()).orElse(new Timestamp(bookSlotRequestDto.getStartTime().getTime() + 28800000)))
+                    .vehicleType(bookSlotRequestDto.getVehicleType())
                     .build();
-            BookingEntity bookingEntity = BookingEntity.builder()
-                    .cardId(slotRequestDto.getCardUserInfoDto().getCardId())
-                    .ph(slotRequestDto.getCardUserInfoDto().getPh())
-                    .name(slotRequestDto.getCardUserInfoDto().getName())
-                    .inTTime(slotRequestDto.getStartTime())
-                    .outTTime(slotRequestDto.getEndTime())
-                    .parkingSpaceId(slotRequestDto.getParkingSpacesDto().getParkingSpaceId())
-                    .build();
+            BookingEntity bookingEntity = getBookingEntity(slotRequestDto);
 
             CompletableFuture.runAsync(() -> bookingRepo.save(bookingEntity));
             return slotRequestDto;
@@ -72,5 +63,22 @@ public class BookingServiceImpl implements BookingService {
             throw new EaseParkException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
+    }
+
+    private BookingEntity getBookingEntity(BookSlotRequestDto slotRequestDto) {
+        return BookingEntity.builder()
+                .cardId(slotRequestDto.getCardUserInfoDto().getCardId())
+                .ph(slotRequestDto.getCardUserInfoDto().getPh())
+                .name(slotRequestDto.getCardUserInfoDto().getName())
+                .inTTime(slotRequestDto.getStartTime())
+                .outTTime(slotRequestDto.getEndTime())
+                .parkingSpaceId(slotRequestDto.getParkingSpacesDto().getParkingSpaceId())
+                .build();
+    }
+
+    private void checkAlreadyBookedStatus(BookSlotRequestDto bookSlotRequestDto) {
+        Optional<BookingEntity> bookingAlreadyExists = bookingRepo.findByStatusIsTrueAndCardIdOrPh(bookSlotRequestDto.getCardUserInfoDto().getCardId(), bookSlotRequestDto.getCardUserInfoDto().getPh());
+        if (bookingAlreadyExists.isPresent())
+            throw new EaseParkException("booking already exists", HttpStatus.BAD_REQUEST);
     }
 }

@@ -15,4 +15,5 @@ public class ParkingSpacesDto {
     private String directionToReach;
     private String floor;
     private Boolean isActive;
+    private String parkingType;
 }

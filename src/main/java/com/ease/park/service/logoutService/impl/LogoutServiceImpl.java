@@ -32,10 +32,10 @@ public class LogoutServiceImpl implements LogoutService {
     public BookingDto logOutUser(BookSlotRequestDto bookSlotRequestDto) {
         log.info("inside logOutUser : {} ", bookSlotRequestDto);
 
-        BookingEntity bookingEntity = bookingRepo.findByCardIdOrPhAndStatusIsTrue(bookSlotRequestDto.getCardUserInfoDto().getCardId(), bookSlotRequestDto.getCardUserInfoDto().getPh()).orElseThrow(() -> new EaseParkException("booking not found", HttpStatus.BAD_REQUEST));
+        BookingEntity bookingEntity = bookingRepo.findByStatusIsTrueAndCardIdOrPh(bookSlotRequestDto.getCardUserInfoDto().getCardId(), bookSlotRequestDto.getCardUserInfoDto().getPh()).orElseThrow(() -> new EaseParkException("booking not found", HttpStatus.BAD_REQUEST));
         ParkingSpaceEntity parkingSpaceEntity = parkingSpaceRepo.findByParkingSpaceId(bookingEntity.getParkingSpaceId()).orElseThrow(() -> new EaseParkException("parking space not found", HttpStatus.BAD_REQUEST));
         bookingEntity.setStatus(false);
-        parkingSpaceEntity.setIsActive(true);
+        parkingSpaceEntity.setActive(true);
         CompletableFuture.runAsync(() -> {
             BookingEntity save = bookingRepo.save(bookingEntity);
             log.info("inside logOutUser -> saved bookingEntity : {} ", save);
